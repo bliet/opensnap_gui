@@ -220,6 +220,19 @@
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save Command</string>
+    </property>
+   </widget>
   </widget>
   <action name="actionSave_as">
    <property name="text">
@@ -351,7 +364,7 @@
    <sender>btn_Path</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>openFolder2()</slot>
+   <slot>openFolderPath()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>366</x>
@@ -363,6 +376,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveAsScript()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>75</x>
+     <y>219</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>164</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>setScreensToAuto()</slot>
@@ -371,6 +400,7 @@
   <slot>cancel()</slot>
   <slot>openFolder()</slot>
   <slot>syncOffset(int)</slot>
-  <slot>openFolder2()</slot>
+  <slot>openFolderPath()</slot>
+  <slot>saveAsScript()</slot>
  </slots>
 </ui>

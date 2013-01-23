@@ -27,7 +27,7 @@ void MainWindow::openFolder(){
     ui->txt_ConfigFiles->setText(dir);
 }
 
-void MainWindow::openFolder2(){
+void MainWindow::openFolderPath(){
     QString dir = QFileDialog::getExistingDirectory(this, "Open", ui->txt_Path->text(), NULL);
     ui->txt_Path->setText(dir);
 }
@@ -38,6 +38,39 @@ void MainWindow::syncOffset(int i){
 }
 
 void MainWindow::execute(){
+    QString exe = this->genarateExecuteString();
+    if(exe != NULL){
+        if(system(NULL)){
+            system(exe.toStdString().data());
+            QMessageBox::information(this, "Folgender Befehl wurde ausgeführt:", exe);
+            this->close();
+        } else {
+            QMessageBox::information(this, "Fehler", "Prozess kann nicht gestartet werden. Versuch es nochmal.");
+        }
+    } else {
+        QMessageBox::information(this, "Fehler", "Path nicht angegeben");
+    }
+
+}
+
+void MainWindow::saveAsScript(){
+    QString exe = this->genarateExecuteString();
+    if(exe != NULL){
+        QString dir = QFileDialog::getSaveFileName(this, "Open", ui->txt_ConfigFiles->text(), NULL, NULL, NULL);
+
+        QFile f(dir);
+        if(f.open(QIODevice::WriteOnly)){
+            QTextStream out(&f);
+
+            out << "#!/bin/sh" << endl;
+            out << exe << endl;
+
+            f.close();
+        }
+    }
+}
+
+QString MainWindow::genarateExecuteString(){
     if(!ui->txt_Path->text().isEmpty()){
         QString exe = ui->txt_Path->text() + "/bin/opensnap ";
 
@@ -55,18 +88,10 @@ void MainWindow::execute(){
         }
 
         exe.append("-d");
-
-        if(system(NULL)){
-            system(exe.toStdString().data());
-            QMessageBox::information(this, "Folgender Befehl wurde ausgeführt:", exe);
-            this->close();
-        } else {
-            QMessageBox::information(this, "Fehler", "Prozess kann nicht gestartet werden. Versuch es nochmal.");
-        }
+        return exe;
     } else {
-        QMessageBox::information(this, "Fehler", "Path nicht angegeben");
+        return NULL;
     }
-
 }
 
 void MainWindow::cancel(){
