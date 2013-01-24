@@ -15,21 +15,18 @@ void Action::addParameter(QString name, QString value){
     this->paras.push_back(p);
 }
 
-bool Action::executeDaemon(){
+QString Action::executeDaemon(){
     QString exe = this->genarateExecuteString();
     if(system(NULL)){
         int ok = system(exe.toStdString().data());
-        QMessageBox::information(NULL, "Folgender Befehl wurde ausgeführt:", exe);
-        return true;
+        return exe;
     } else {
-        QMessageBox::information(NULL, "Fehler", "Prozess kann nicht gestartet werden. Versuch es nochmal.");
-        return false;
+        return NULL;
     }
 }
 
-bool Action::saveAsScript(){
+QString Action::saveAsScript(QString dir){
     QString exe = this->genarateExecuteString();
-    QString dir = QFileDialog::getSaveFileName(NULL, "Open", this->path, NULL, NULL, NULL);
 
     QFile f(dir);
     if(f.open(QIODevice::WriteOnly)){
@@ -39,9 +36,9 @@ bool Action::saveAsScript(){
         out << exe << endl;
 
         f.close();
-        return true;
+        return exe;
     }
-    return false;
+    return NULL;
 }
 
 QString Action::genarateExecuteString(){

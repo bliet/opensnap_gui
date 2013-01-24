@@ -46,12 +46,23 @@ void MainWindow::syncOffset(int i){
 
 void MainWindow::execute(){
     this->fillParameterList();
-    this->action.executeDaemon();
+    QString exe = this->action.executeDaemon();
+    if(exe==NULL){
+        QMessageBox::information(this, "Error", "Could not execute the command.");
+    } else {
+        QMessageBox::information(this, "Nice", "Command execute.");
+    }
 }
 
 void MainWindow::saveAsScript(){
     this->fillParameterList();
-    this->action.saveAsScript();
+    QString dir = QFileDialog::getSaveFileName(NULL, "Open", this->homevar, NULL, NULL, NULL);
+    QString exe = this->action.saveAsScript(dir);
+    if(exe==NULL){
+        QMessageBox::information(this, "Error", "Could not save the file");
+    } else {
+        QMessageBox::information(this, "Nice", "File save.");
+    }
 }
 
 void MainWindow::fillParameterList(){

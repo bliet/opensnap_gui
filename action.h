@@ -18,8 +18,8 @@ public:
     void addOpenSnapPath(QString path);
     void addParameter(QString,QString);
     void clear();
-    bool executeDaemon();
-    bool saveAsScript();
+    QString executeDaemon();
+    QString saveAsScript(QString dir);
 };
 
 #endif // ACTION_H
