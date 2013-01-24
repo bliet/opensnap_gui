@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextStream>
+#include "action.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,7 +31,9 @@ public slots:
     
 private:
     Ui::MainWindow *ui;
-    QString genarateExecuteString();
+    QString homevar;
+    void fillParameterList();
+    Action action;
 };
 
 #endif // MAINWINDOW_H

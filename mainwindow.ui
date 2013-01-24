@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QDialogButtonBox" name="buttonBox">
     <property name="geometry">
@@ -186,7 +189,7 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>131</width>
+      <width>111</width>
       <height>17</height>
      </rect>
     </property>
