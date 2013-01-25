@@ -8,6 +8,10 @@ void Action::addOpenSnapPath(QString path){
     this->path = path;
 }
 
+void Action::addConfigPath(QString path){
+    this->configPath = path;
+}
+
 void Action::addParameter(QString name, QString value){
     Parameter *p = new Parameter();
     p->setName(name);
@@ -50,6 +54,41 @@ QString Action::genarateExecuteString(){
     }
 
     return exe;
+}
+
+/**
+ * Enable or disable the snapping function of opensnap.
+ * It just rename the file. So opensnap can not find the file and so it does nothing.
+ *
+ * @brief Action::enableSnapping
+ * @param side
+ * @param enable
+ */
+void Action::enableSnapping(int side, bool enable){
+    QString filename;
+    switch(side){
+        case Edge::TOP:
+            filename = "hit_top"; break;
+        case Edge::BOTTOM:
+            filename = "hit_bottom"; break;
+        case Edge::LEFT:
+            filename = "hit_left"; break;
+        case Edge::RIGHT:
+            filename = "hit_right"; break;
+    }
+
+    QString filepath = this->configPath + "/" + filename;
+    if(enable){
+        QFile file(filepath + ".disable");
+        if(file.exists()){
+            file.rename(filepath);
+        }
+    } else {
+        QFile file(filepath);
+        if(file.exists()){
+            file.rename(filepath + ".disable");
+        }
+    }
 }
 
 void Action::clear(){

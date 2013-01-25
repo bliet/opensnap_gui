@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QAction>
 #include "action.h"
 
 namespace Ui {
@@ -28,10 +29,12 @@ public slots:
     void cancel();
     void syncOffset(int i);
     void saveAsScript();
-    
+    void info(QAction*);
+
 private:
     Ui::MainWindow *ui;
     QString homevar;
+    bool validateInput();
     void fillParameterList();
     Action action;
 };

@@ -19,7 +19,8 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     action.h \
-    parameter.h
+    parameter.h \
+    edge.h
 
 FORMS    += mainwindow.ui
 

@@ -14,6 +14,12 @@ MainWindow::MainWindow(QWidget *parent) :
     } else {
         ui->txt_Path->setText(this->homevar);
     }
+    path.append("sample_configs/");
+    if(QFile::exists(path)){
+        ui->txt_ConfigFiles->setText(path);
+    } else {
+        ui->txt_ConfigFiles->setText(this->homevar);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -45,45 +51,71 @@ void MainWindow::syncOffset(int i){
 }
 
 void MainWindow::execute(){
-    this->fillParameterList();
-    QString exe = this->action.executeDaemon();
-    if(exe==NULL){
-        QMessageBox::information(this, "Error", "Could not execute the command.");
+    if(this->validateInput()){
+        //enable or disable snapping function for each edge
+        this->action.addConfigPath(ui->txt_ConfigFiles->text());
+        this->action.enableSnapping(Edge::TOP, ui->che_Top->isChecked());
+        this->action.enableSnapping(Edge::BOTTOM, ui->che_Bottom->isChecked());
+        this->action.enableSnapping(Edge::LEFT, ui->che_Left->isChecked());
+        this->action.enableSnapping(Edge::RIGHT, ui->che_Right->isChecked());
+
+        //adding parameter for the command
+        this->fillParameterList();
+
+        //execute the command to start OpenSnap
+        QString exe = this->action.executeDaemon();
+        if(exe==NULL){
+            QMessageBox::information(this, "Error", "Could not execute the command.");
+        } else {
+            QMessageBox::information(this, "Nice", "Command executed.");
+        }
     } else {
-        QMessageBox::information(this, "Nice", "Command execute.");
+        QMessageBox::information(this, "Input", "Validation failed.");
     }
 }
 
 void MainWindow::saveAsScript(){
-    this->fillParameterList();
-    QString dir = QFileDialog::getSaveFileName(NULL, "Open", this->homevar, NULL, NULL, NULL);
-    QString exe = this->action.saveAsScript(dir);
-    if(exe==NULL){
-        QMessageBox::information(this, "Error", "Could not save the file");
+    if(this->validateInput()){
+        this->fillParameterList();
+        QMessageBox::information(this, "Information", "Snap-Options will be ignored in the file");
+        QString dir = QFileDialog::getSaveFileName(NULL, "Open", this->homevar, NULL, NULL, NULL);
+        QString exe = this->action.saveAsScript(dir);
+        if(exe==NULL){
+            QMessageBox::information(this, "Error", "Could not save the file");
+        } else {
+            QMessageBox::information(this, "Nice", "File saved.");
+        }
     } else {
-        QMessageBox::information(this, "Nice", "File save.");
+        QMessageBox::information(this, "Input", "Validation failed.");
     }
+}
+
+void MainWindow::info(QAction *a){
+    /*Comming soon*/
 }
 
 void MainWindow::fillParameterList(){
     this->action.clear();
-    if(!ui->txt_Path->text().isEmpty()){
-        this->action.addOpenSnapPath(ui->txt_Path->text() + "bin/opensnap ");
 
-        if(!ui->txt_ConfigFiles->text().isEmpty()){
-            this->action.addParameter("-c", ui->txt_ConfigFiles->text());
-        }
+    this->action.addOpenSnapPath(ui->txt_Path->text() + "bin/opensnap ");
 
-        this->action.addParameter("-o", QString("%1").arg(ui->sli_Offset->value()));
-
-        if(ui->rad_ScreensManuel->isChecked()){
-            this->action.addParameter("-s", QString("%1").arg(ui->spi_Screens->value()));
-        }
-
-        this->action.addParameter("-d", "");
-    } else {
-        QMessageBox::information(this, "Error", "Path empty");
+    if(!ui->txt_ConfigFiles->text().isEmpty()){
+        this->action.addParameter("-c", ui->txt_ConfigFiles->text());
     }
+
+    this->action.addParameter("-o", QString("%1").arg(ui->sli_Offset->value()));
+
+    if(ui->rad_ScreensManuel->isChecked()){
+        this->action.addParameter("-s", QString("%1").arg(ui->spi_Screens->value()));
+    }
+
+    this->action.addParameter("-d", "");
+}
+
+bool MainWindow::validateInput(){
+    bool a = ui->txt_Path->text().isEmpty();
+    bool b = ui->txt_ConfigFiles->text().isEmpty();
+    return (!a && !b);
 }
 
 void MainWindow::cancel(){
