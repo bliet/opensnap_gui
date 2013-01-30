@@ -524,6 +524,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSave_Profile</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveProfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>160</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoad_Profile</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loadProfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>160</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>setScreensToAuto()</slot>
@@ -535,5 +567,7 @@
   <slot>openFolderPath()</slot>
   <slot>saveAsScript()</slot>
   <slot>info(QAction*)</slot>
+  <slot>saveProfile()</slot>
+  <slot>loadProfile()</slot>
  </slots>
 </ui>

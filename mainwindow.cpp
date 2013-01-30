@@ -133,10 +133,42 @@ bool MainWindow::validateInput(){
 }
 
 void MainWindow::saveProfile(){
-    /*TODO: Comming soon*/
+    this->setOpenSnapConfig();
+    QString filepath = QFileDialog::getSaveFileName(this, "Save", this->homevar, NULL, NULL, NULL);
+    bool ok = this->action.save(filepath);
+    if(ok){
+        QMessageBox::information(this, "Nice", "Profile saved");
+    } else {
+        QMessageBox::information(this, "Error","Could not save the file. Try again.");
+    }
 };
+
 void MainWindow::loadProfile(){
-    /*TODO: Comming soon*/
+    QString filepath = QFileDialog::getOpenFileName(this, "Open", this->homevar, NULL, NULL, NULL);
+    bool ok = this->action.load(filepath);
+    if(ok){
+        ui->txt_Path->setText(this->action.getOpenSnapPath());
+        ui->txt_ConfigFiles->setText(this->action.getConfigPath());
+
+        if(this->action.getNumberOfScreens()==0){
+            ui->rad_ScreensAuto->setChecked(true);
+            ui->spi_Screens->setEnabled(false);
+        } else {
+            ui->rad_ScreensManuel->setChecked(true);
+            ui->spi_Screens->setValue(this->action.getNumberOfScreens());
+        }
+
+        ui->spi_Offset->setValue(this->action.getOffset());
+
+        ui->che_Top->setChecked(this->action.getTop());
+        ui->che_Bottom->setChecked(this->action.getBottom());
+        ui->che_Left->setChecked(this->action.getLeft());
+        ui->che_Right->setChecked(this->action.getRight());
+
+        QMessageBox::information(this, "Nice", "Profile loaded");
+    } else {
+        QMessageBox::information(this, "Error","Could not load the file. Try again.");
+    }
 };
 
 void MainWindow::info(QAction *a){

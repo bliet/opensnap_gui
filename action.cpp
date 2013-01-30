@@ -2,6 +2,7 @@
 
 Action::Action()
 {
+    screens = 0;
 }
 
 //Setter###########################################################################################
@@ -26,6 +27,39 @@ void Action::setOffset(int offset){
 
 void Action::setNumberOfScreens(int number){
     this->screens = number;
+}
+
+//Getter###########################################################################################
+QString Action::getOpenSnapPath(){
+    return this->openSnapPath;
+}
+
+QString Action::getConfigPath(){
+    return this->configPath;
+}
+
+bool Action::getTop(){
+    return this->top;
+}
+
+bool Action::getBottom(){
+    return this->bottom;
+}
+
+bool Action::getLeft(){
+    return this->left;
+}
+
+bool Action::getRight(){
+    return right;
+}
+
+int Action::getOffset(){
+    return this->offset;
+}
+
+int Action::getNumberOfScreens(){
+    return screens;
 }
 
 //Public Methods###################################################################################
@@ -58,6 +92,71 @@ QString Action::saveAsScript(QString dir){
         return exe;
     }
     return NULL;
+}
+
+bool Action::save(QString path){
+    QFile f(path);
+    if(f.open(QIODevice::WriteOnly)){
+        QTextStream out(&f);
+        out << "#Profile File for OpenSnap GUI" << endl;
+        out << "openSnapPath=" + this->openSnapPath << endl;
+        out << "configPath=" + this->configPath << endl;
+        out << "edge.top=" + QString(this->top?"1":"0") << endl;
+        out << "edge.bottom=" + QString(this->bottom?"1":"0") << endl;
+        out << "edge.left=" + QString(this->left?"1":"0") << endl;
+        out << "edge.right=" + QString(this->right?"1":"0") << endl;
+        out << "offset=" + QString::number(this->offset) << endl;
+        out << "screens=" + QString::number(this->screens);
+        f.close();
+        return true;
+    }
+    return false;
+}
+
+bool Action::load(QString path){
+    QFile f(path);
+    if(f.open(QIODevice::ReadOnly)){
+        QTextStream in(&f);
+        while(!in.atEnd()){
+            QString line = in.readLine();
+            if(line != NULL && line.at(0) != '#'){
+                QStringList values = line.split("=");
+                QString key = values.at(0);
+                QString value = values.at(1);
+                QStringList options;
+                options << "openSnapPath" << "configPath" << "edge.top" << "edge.bottom" << "edge.left" << "edge.right" << "offset" << "screens";
+                switch(options.indexOf(key)){
+                    case 0:
+                        this->setOpenSnapPath(value.trimmed());
+                        break;
+                    case 1:
+                        this->setConfigPath(value.trimmed());
+                        break;
+                    case 2:
+                        this->top = (value == "1");
+                        break;
+                    case 3:
+                        this->bottom = (value == "1");
+                        break;
+                    case 4:
+                        this->left = (value == "1");
+                        break;
+                    case 5:
+                        this->right = (value == "1");
+                        break;
+                    case 6:
+                        this->setOffset(value.toInt());
+                        break;
+                    case 7:
+                        this->setNumberOfScreens(value.toInt());
+                        break;
+                }
+            }
+        }
+        f.close();
+        return true;
+    }
+    return false;
 }
 
 //Private Helper###################################################################################

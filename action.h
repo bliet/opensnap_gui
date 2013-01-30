@@ -15,7 +15,7 @@ private:
     QString configPath;
     bool top,bottom,left,right;
     int offset;
-    int screens = 0;    //0 = autodetected
+    int screens;    //0 = autodetected
 
     QString genarateExecuteString();
     bool enableSnapping(int side, bool enable);
@@ -28,10 +28,23 @@ public:
     void setEnableSnapping(bool top, bool bottom, bool left, bool right);
     void setOffset(int offset);
     void setNumberOfScreens(int number);
+    //Getter
+    QString getOpenSnapPath();
+    QString getConfigPath();
+    bool getTop();
+    bool getBottom();
+    bool getLeft();
+    bool getRight();
+    int getOffset();
+    int getNumberOfScreens();
 
     //Methods
     QString executeDaemon();
     QString saveAsScript(QString dir);
+
+    //Save an Load a Profile
+    bool save(QString path);
+    bool load(QString path);
 };
 
 #endif // ACTION_H
