@@ -8,23 +8,41 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->homevar = QString(getenv("HOME"));
-    QString path = this->homevar + QString("/opensnap/");
-    if(QFile::exists(path)){
-        ui->txt_Path->setText(path);
+
+    QString path;
+    if(openSnapIsInPath()){
+        path = "opensnap";
     } else {
-        ui->txt_Path->setText(this->homevar);
+        path = this->homevar;
+        if(QFile::exists(path + "/opensnap/")){
+            path += QString("/opensnap/");
+        }
     }
-    path.append("sample_configs/");
-    if(QFile::exists(path)){
-        ui->txt_ConfigFiles->setText(path);
+    ui->txt_Path->setText(path);
+
+    if(QFile::exists(path + "sample_configs/")){
+        ui->txt_ConfigFiles->setText(path + "sample_configs/");
     } else {
-        ui->txt_ConfigFiles->setText(this->homevar);
+        ui->txt_ConfigFiles->setText(path);
     }
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+bool MainWindow::openSnapIsInPath()
+{
+    bool isInPath = false;
+    QString path = QString(getenv("PATH"));
+    QStringList pathList = path.split(":");
+    foreach (QString var, pathList) {
+        if(var.endsWith("opensnap/bin")){
+            isInPath = true;
+        }
+    }
+    return isInPath;
 }
 
 void MainWindow::setScreensToAuto(){
@@ -52,22 +70,15 @@ void MainWindow::syncOffset(int i){
 
 void MainWindow::execute(){
     if(this->validateInput()){
-        //enable or disable snapping function for each edge
-        this->action.addConfigPath(ui->txt_ConfigFiles->text());
-        this->action.enableSnapping(Edge::TOP, ui->che_Top->isChecked());
-        this->action.enableSnapping(Edge::BOTTOM, ui->che_Bottom->isChecked());
-        this->action.enableSnapping(Edge::LEFT, ui->che_Left->isChecked());
-        this->action.enableSnapping(Edge::RIGHT, ui->che_Right->isChecked());
-
         //adding parameter for the command
-        this->fillParameterList();
+        this->setOpenSnapConfig();
 
         //execute the command to start OpenSnap
         QString exe = this->action.executeDaemon();
         if(exe==NULL){
             QMessageBox::information(this, "Error", "Could not execute the command.");
         } else {
-            QMessageBox::information(this, "Nice", "Command executed.");
+            QMessageBox::information(this, "Nice", "Command executed: " + exe);
         }
     } else {
         QMessageBox::information(this, "Input", "Validation failed.");
@@ -76,46 +87,60 @@ void MainWindow::execute(){
 
 void MainWindow::saveAsScript(){
     if(this->validateInput()){
-        this->fillParameterList();
+        this->setOpenSnapConfig();
         QMessageBox::information(this, "Information", "Snap-Options will be ignored in the file");
         QString dir = QFileDialog::getSaveFileName(NULL, "Open", this->homevar, NULL, NULL, NULL);
         QString exe = this->action.saveAsScript(dir);
         if(exe==NULL){
-            QMessageBox::information(this, "Error", "Could not save the file");
+            QMessageBox::information(this, "Error", "Could not save the file.");
         } else {
-            QMessageBox::information(this, "Nice", "File saved.");
+            QMessageBox::information(this, "Nice", "File saved. Content: " + exe);
         }
     } else {
         QMessageBox::information(this, "Input", "Validation failed.");
     }
 }
 
-void MainWindow::info(QAction *a){
-    /*Comming soon*/
-}
+void MainWindow::setOpenSnapConfig(){
+    //Set path to OpenSnap (or the Command for opensnap)
+    this->action.setOpenSnapPath(ui->txt_Path->text() + "bin/opensnap ");
+    //Set path to the config files
+    this->action.setConfigPath(ui->txt_ConfigFiles->text());
 
-void MainWindow::fillParameterList(){
-    this->action.clear();
+    //enable or disable snapping function for each edge
+    this->action.setEnableSnapping(
+                ui->che_Top->isChecked(),
+                ui->che_Bottom->isChecked(),
+                ui->che_Left->isChecked(),
+                ui->che_Right->isChecked()
+                );
 
-    this->action.addOpenSnapPath(ui->txt_Path->text() + "bin/opensnap ");
+    //Set Offset
+    this->action.setOffset(ui->sli_Offset->value());
 
-    if(!ui->txt_ConfigFiles->text().isEmpty()){
-        this->action.addParameter("-c", ui->txt_ConfigFiles->text());
-    }
-
-    this->action.addParameter("-o", QString("%1").arg(ui->sli_Offset->value()));
-
+    //Set number of screens, if checked
     if(ui->rad_ScreensManuel->isChecked()){
-        this->action.addParameter("-s", QString("%1").arg(ui->spi_Screens->value()));
+        this->action.setNumberOfScreens(ui->spi_Screens->value());
+    } else {
+        this->action.setNumberOfScreens(0);
     }
-
-    this->action.addParameter("-d", "");
 }
 
 bool MainWindow::validateInput(){
     bool a = ui->txt_Path->text().isEmpty();
     bool b = ui->txt_ConfigFiles->text().isEmpty();
     return (!a && !b);
+}
+
+void MainWindow::saveProfile(){
+    /*TODO: Comming soon*/
+};
+void MainWindow::loadProfile(){
+    /*TODO: Comming soon*/
+};
+
+void MainWindow::info(QAction *a){
+    /*TODO: Comming soon*/
 }
 
 void MainWindow::cancel(){

@@ -11,18 +11,25 @@
 class Action
 {
 private:
-    QString path;
+    QString openSnapPath;
     QString configPath;
-    QVector<Parameter*> paras;
-    QString genarateExecuteString();
     bool top,bottom,left,right;
+    int offset;
+    int screens = 0;    //0 = autodetected
+
+    QString genarateExecuteString();
+    bool enableSnapping(int side, bool enable);
+
 public:
     Action();
-    void addOpenSnapPath(QString path);
-    void addConfigPath(QString path);
-    void enableSnapping(int side, bool enable);
-    void addParameter(QString,QString);
-    void clear();
+    //Setter
+    void setOpenSnapPath(QString path);
+    void setConfigPath(QString path);
+    void setEnableSnapping(bool top, bool bottom, bool left, bool right);
+    void setOffset(int offset);
+    void setNumberOfScreens(int number);
+
+    //Methods
     QString executeDaemon();
     QString saveAsScript(QString dir);
 };

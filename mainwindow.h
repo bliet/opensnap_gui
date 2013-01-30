@@ -20,6 +20,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+
 public slots:
     void setScreensToAuto();
     void setScreensToManuel();
@@ -29,13 +30,17 @@ public slots:
     void cancel();
     void syncOffset(int i);
     void saveAsScript();
+    void saveProfile();
+    void loadProfile();
     void info(QAction*);
 
 private:
+    bool openSnapIsInPath();
+    bool validateInput();
+    void setOpenSnapConfig();
+
     Ui::MainWindow *ui;
     QString homevar;
-    bool validateInput();
-    void fillParameterList();
     Action action;
 };
 

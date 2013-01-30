@@ -9,7 +9,7 @@ private:
     QString name;
     QString value;
 public:
-    Parameter();
+    Parameter(QString n, QString v) { name = n; value = v; };
     QString getName() { return name; };
     void setName(QString n) { name = n; };
     QString getValue() { return value; };
